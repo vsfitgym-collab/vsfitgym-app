@@ -1,0 +1,16 @@
+{
+    "name": "VSFit Gym",
+    "short_name": "VSFit Gym",
+    "description": "Plataforma completa para personal trainers gerenciarem alunos, treinos e evolução física.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0a0a0a",
+    "theme_color": "#0a0a0a",
+    "icons": [
+        {
+            "src": "/public/favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        }
+    ]
+}
