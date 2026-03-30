@@ -158,14 +158,22 @@ const PersonalDashboard: React.FC = () => {
       });
       
       if (error) {
-        // Se error message for um objeto JSON serializado, tentamos pegar o campo 'error'
-        const errorMsg = error.message;
+        let realError = error.message;
         try {
-          const parsed = JSON.parse(errorMsg);
-          throw new Error(parsed.error || parsed.message || 'Erro ao convidar aluno.');
-        } catch {
-          throw new Error(errorMsg || 'Erro ao convidar aluno.');
-        }
+          if (error.context && typeof error.context.text === 'function') {
+             const rawBody = await error.context.text();
+             if (rawBody) {
+               try {
+                 const parsed = JSON.parse(rawBody);
+                 realError = parsed.error || parsed.message || rawBody;
+               } catch (e) {
+                 realError = rawBody;
+               }
+             }
+          }
+        } catch (ignored) {}
+
+        throw new Error(`[Servidor] ${realError}`);
       }
       
       // Se houvesse erro retornado dentro do data do body
