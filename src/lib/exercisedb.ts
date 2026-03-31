@@ -1,4 +1,79 @@
 const BASE_URL = 'https://exercisedb.dev/api/v1';
+// ─── Instruction Translations (Dicionário Completo) ────────────────────────────
+const instructionTranslations: Record<string, string> = {
+  // Posição/Setup
+  'lie flat on a bench': 'deite-se horizontalmente no banco',
+  'lie flat on your back on a bench': 'deite-se de costas no banco',
+  'stand with feet hip-width apart': 'fique em pé com os pés na largura do quadril',
+  'stand with feet shoulder-width apart': 'fique em pé com os pés na largura dos ombros',
+  'sit on the machine': 'sente-se na máquina',
+  'sit on a bench': 'sente-se em um banco',
+  'grab the bar': 'pegue na barra',
+  'grip the bar': 'agarre a barra',
+  'hold the weight': 'segure o peso',
+  
+  // Movimentos
+  'press the weight forward': 'empurre o peso para frente',
+  'push the weight up': 'empurre o peso para cima',
+  'pull the weight towards you': 'puxe o peso em sua direção',
+  'lower the weight': 'abaixe o peso',
+  'raise the weight': 'levante o peso',
+  'squeeze your muscles': 'aperte seus músculos',
+  'bend your elbows': 'dobre seus cotovelos',
+  'straighten your arms': 'estique seus braços',
+  'bend your knees': 'dobre seus joelhos',
+  'keep your back straight': 'mantenha suas costas retas',
+  'keep your core tight': 'mantenha seu core contraído',
+  
+  // Respiração
+  'breathe in': 'inspire',
+  'breathe out': 'expire',
+  'exhale as you': 'expire enquanto',
+  'inhale as you': 'inspire enquanto',
+  
+  // Repetição
+  'repeat for reps': 'repita pelo número de repetições',
+  'perform the movement': 'execute o movimento',
+  'do this for the prescribed number of reps': 'faça pelo número prescrito de repetições',
+};
+
+// Função para traduzir uma instrução individual
+function translateInstruction(instruction: string): string {
+  const lower = instruction.toLowerCase();
+  
+  // Procura match direto
+  if (instructionTranslations[lower]) {
+    return instructionTranslations[lower];
+  }
+  
+  // Procura por substring (se contém a chave)
+  for (const [key, value] of Object.entries(instructionTranslations)) {
+    if (lower.includes(key)) {
+      return instruction.replace(new RegExp(key, 'gi'), value);
+    }
+  }
+  
+  // Se não encontrou, retorna a instrução original
+  return instruction;
+}
+
+// Função síncrona para traduzir array de instruções
+export function translateInstructionsSync(instructions: string[]): string[] {
+  return instructions.map(i => translateInstruction(i));
+}
+
+// Nova função de normalização completa
+export function normalizeExerciseData(exercise: ExerciseDBItem): ExerciseDBItem {
+  return {
+    ...exercise,
+    name: translateExerciseName(exercise.name),
+    targetMuscles: exercise.targetMuscles.map(m => translateMuscle(m)),
+    bodyParts: exercise.bodyParts.map(b => translateBodyPart(b)),
+    equipments: exercise.equipments.map(e => translateEquipment(e)),
+    secondaryMuscles: exercise.secondaryMuscles.map(m => translateMuscle(m)),
+    instructions: translateInstructionsSync(exercise.instructions) // ← Síncrono!
+  };
+}
 
 export interface ExerciseDBItem {
   exerciseId: string;

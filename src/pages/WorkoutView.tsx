@@ -19,7 +19,8 @@ import {
   RotateCcw,
   Trophy,
   PartyPopper,
-  Sparkles
+  Sparkles,
+  Dumbbell
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -170,33 +171,33 @@ const WorkoutView: React.FC = () => {
     );
   }
 
-  // Active Workout Perspective
+  // Active Workout Perspective - MODERNIZED
   if (isTracking && currentExercise) {
     return (
       <div className="min-h-screen bg-black text-white flex flex-col">
         {/* Header */}
-        <div className="p-4 flex items-center justify-between border-b border-zinc-800 bg-zinc-950/50 backdrop-blur-md sticky top-0 z-10">
-          <button onClick={() => setIsTracking(false)} className="p-2 text-zinc-400 hover:text-white">
+        <div className="p-4 md:p-6 flex items-center justify-between border-b border-zinc-800 bg-zinc-950/50 backdrop-blur-md sticky top-0 z-10">
+          <button onClick={() => setIsTracking(false)} className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-900 rounded-xl transition-all">
             <X className="w-6 h-6" />
           </button>
-          <div className="text-center">
-            <h2 className="text-sm font-bold text-zinc-500 uppercase tracking-widest">{workout.name}</h2>
-            <p className="text-xs text-zinc-600">Exercício {currentIndex + 1} de {workout.exercises.length}</p>
+          <div className="text-center min-w-0">
+            <h2 className="text-sm font-bold text-zinc-500 uppercase tracking-widest truncate">{workout.name}</h2>
+            <p className="text-xs text-zinc-600">Série {currentIndex + 1} de {workout.exercises.length}</p>
           </div>
           <div className="w-10" /> {/* Spacer */}
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full h-1 bg-zinc-900 overflow-hidden">
+        <div className="h-2 bg-zinc-900 overflow-hidden border-b border-zinc-800">
           <div 
-            className="h-full bg-orange-600 transition-all duration-500" 
+            className="h-full bg-gradient-to-r from-orange-500 to-orange-600 transition-all duration-500 shadow-lg shadow-orange-600/50" 
             style={{ width: `${((currentIndex + 1) / workout.exercises.length) * 100}%` }} 
           />
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-6 pb-32">
-          {/* Visual Demo */}
-          <div className="aspect-square bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-800 relative shadow-2xl">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 pb-40">
+          {/* Exercise Demo - Large Visual */}
+          <div className="aspect-square bg-gradient-to-br from-zinc-900 to-zinc-950 rounded-3xl overflow-hidden border border-zinc-800 relative shadow-2xl">
             {currentExercise.gifUrl ? (
               <img 
                 src={currentExercise.gifUrl} 
@@ -205,19 +206,19 @@ const WorkoutView: React.FC = () => {
               />
             ) : (
               <div className="w-full h-full flex flex-col items-center justify-center text-zinc-700">
-                <Play className="w-16 h-16 mb-2 opacity-20" />
-                <p className="text-sm font-medium">Demonstração indisponível</p>
+                <Dumbbell className="w-20 h-20 mb-4 opacity-20" />
+                <p className="text-sm font-medium">Sem demonstração</p>
               </div>
             )}
             
             {/* Timer Overlay */}
             {isTimerActive && (
-              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in duration-300">
-                <div className="text-7xl font-black text-orange-500 tabular-nums mb-4">{timerValue}</div>
-                <p className="text-zinc-400 uppercase font-bold tracking-widest text-sm">Tempo de Descanso</p>
+              <div className="absolute inset-0 bg-black/70 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in duration-300">
+                <div className="text-8xl font-black text-orange-500 tabular-nums mb-4 drop-shadow-lg">{timerValue}</div>
+                <p className="text-zinc-300 uppercase font-bold tracking-widest text-sm">Tempo de Descanso</p>
                 <button 
                   onClick={() => setIsTimerActive(false)}
-                  className="mt-8 px-6 py-2 bg-zinc-800 rounded-full text-xs font-bold hover:bg-zinc-700 transition-colors"
+                  className="mt-8 px-6 py-3 bg-orange-600 hover:bg-orange-700 rounded-full text-xs font-bold transition-all shadow-lg shadow-orange-600/30 active:scale-95"
                 >
                   Pular Descanso
                 </button>
@@ -225,57 +226,96 @@ const WorkoutView: React.FC = () => {
             )}
           </div>
 
-          {/* Info Card */}
-          <div className="space-y-4">
-            <div>
-              <h1 className="text-3xl font-black text-white">{currentExercise.name}</h1>
-              <p className="text-orange-500 font-bold uppercase text-sm tracking-tighter">{currentExercise.muscleGroup}</p>
+          {/* Exercise Name & Muscle Group */}
+          <div className="space-y-2">
+            <h1 className="text-4xl md:text-5xl font-black text-white">{currentExercise.name}</h1>
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="bg-orange-600/20 border border-orange-600/40 px-4 py-1.5 rounded-full text-sm font-bold text-orange-400 uppercase tracking-widest">
+                {currentExercise.muscleGroup}
+              </span>
+              <span className="text-zinc-500 font-bold">•</span>
+              <span className="text-zinc-400 text-sm">Exercício {currentIndex + 1}/{workout.exercises.length}</span>
             </div>
+          </div>
 
-            <div className="grid grid-cols-3 gap-3">
-              <div className="bg-zinc-900/50 border border-zinc-800 p-4 rounded-2xl text-center">
-                <Repeat className="w-5 h-5 text-orange-500 mx-auto mb-1" />
-                <p className="text-[10px] text-zinc-500 uppercase font-black">Séries x Reps</p>
-                <p className="text-lg font-bold text-white">{currentExercise.sets} x {currentExercise.reps}</p>
-              </div>
-              <div className="bg-zinc-900/50 border border-zinc-800 p-4 rounded-2xl text-center">
-                <Weight className="w-5 h-5 text-blue-500 mx-auto mb-1" />
-                <p className="text-[10px] text-zinc-500 uppercase font-black">Carga</p>
-                <p className="text-lg font-bold text-white">{currentExercise.load || '--'}</p>
-              </div>
-              <div className="bg-zinc-900/50 border border-zinc-800 p-4 rounded-2xl text-center">
-                <Timer className="w-5 h-5 text-green-500 mx-auto mb-1" />
-                <p className="text-[10px] text-zinc-500 uppercase font-black">Descanso</p>
-                <p className="text-lg font-bold text-white">{currentExercise.rest}</p>
+          {/* Key Stats Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl text-center hover:border-orange-600/30 transition-all">
+              <Repeat className="w-5 h-5 text-orange-500 mx-auto mb-2" />
+              <p className="text-[9px] text-zinc-500 uppercase font-black tracking-widest">Séries</p>
+              <p className="text-2xl font-black text-white mt-1">{currentExercise.sets}</p>
+            </div>
+            <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl text-center hover:border-blue-600/30 transition-all">
+              <CheckCircle2 className="w-5 h-5 text-blue-500 mx-auto mb-2" />
+              <p className="text-[9px] text-zinc-500 uppercase font-black tracking-widest">Repetições</p>
+              <p className="text-2xl font-black text-white mt-1">{currentExercise.reps}</p>
+            </div>
+            <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl text-center hover:border-yellow-600/30 transition-all">
+              <Weight className="w-5 h-5 text-yellow-500 mx-auto mb-2" />
+              <p className="text-[9px] text-zinc-500 uppercase font-black tracking-widest">Carga</p>
+              <p className="text-2xl font-black text-white mt-1">{currentExercise.load || '--'}</p>
+            </div>
+            <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl text-center hover:border-green-600/30 transition-all">
+              <Timer className="w-5 h-5 text-green-500 mx-auto mb-2" />
+              <p className="text-[9px] text-zinc-500 uppercase font-black tracking-widest">Descanso</p>
+              <p className="text-2xl font-black text-white mt-1">{currentExercise.rest}</p>
+            </div>
+          </div>
+
+          {/* Instructions Card */}
+          {currentExercise.notes && (
+            <div className="bg-gradient-to-br from-blue-600/20 to-cyan-600/10 border border-blue-600/30 p-6 rounded-3xl space-y-3">
+              <div className="flex items-start gap-3">
+                <Info className="w-6 h-6 text-blue-400 shrink-0 mt-1" />
+                <div className="flex-1">
+                  <h3 className="text-sm font-black text-blue-300 uppercase tracking-widest mb-2">Instruções</h3>
+                  <p className="text-sm text-blue-100 leading-relaxed">{currentExercise.notes}</p>
+                </div>
               </div>
             </div>
+          )}
 
-            {currentExercise.notes && (
-              <div className="bg-blue-600/10 border border-blue-600/20 p-4 rounded-2xl flex gap-3">
-                <Info className="w-5 h-5 text-blue-500 shrink-0" />
-                <p className="text-sm text-blue-100 italic">{currentExercise.notes}</p>
-              </div>
-            )}
+          {/* Helpful Tips */}
+          <div className="bg-gradient-to-br from-emerald-600/20 to-teal-600/10 border border-emerald-600/30 p-6 rounded-3xl space-y-3">
+            <h3 className="text-sm font-black text-emerald-300 uppercase tracking-widest flex items-center gap-2">
+              <Sparkles className="w-4 h-4" /> Dicas Profissionais
+            </h3>
+            <ul className="space-y-2 text-sm text-emerald-100">
+              <li className="flex gap-2">
+                <span className="font-black">•</span>
+                <span>Mantenha a forma correta do começo ao fim</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="font-black">•</span>
+                <span>Controle a respiração: expire na contração, inspire na volta</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="font-black">•</span>
+                <span>Se sentir dor, pare e revise sua posição</span>
+              </li>
+            </ul>
           </div>
         </div>
 
-        {/* Footer Controls */}
-        <div className="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black via-black/90 to-transparent flex items-center justify-between gap-4">
+        {/* Footer Controls - Improved */}
+        <div className="fixed bottom-0 left-0 right-0 p-4 md:p-6 bg-gradient-to-t from-black via-black/95 to-transparent flex items-center justify-between gap-3">
           <button 
             disabled={currentIndex === 0}
             onClick={() => setCurrentIndex(prev => prev - 1)}
-            className="w-14 h-14 bg-zinc-900 border border-zinc-800 rounded-2xl flex items-center justify-center disabled:opacity-30 disabled:grayscale transition-all"
+            className="w-14 h-14 md:w-16 md:h-16 bg-zinc-900 border border-zinc-800 rounded-3xl flex items-center justify-center disabled:opacity-20 disabled:grayscale hover:bg-zinc-800 transition-all active:scale-95"
+            title="Exercício anterior"
           >
-            <ChevronLeft className="w-8 h-8" />
+            <ChevronLeft className="w-6 h-6 md:w-8 md:h-8" />
           </button>
 
           <div className="flex-1 flex gap-2">
             {!isTimerActive && (
               <button 
                 onClick={() => startTimer(currentExercise.rest)}
-                className="w-14 h-14 bg-zinc-900 border border-zinc-800 rounded-2xl flex items-center justify-center hover:bg-zinc-800 transition-all"
+                className="w-14 h-14 md:w-16 md:h-16 bg-zinc-900 border border-zinc-800 rounded-3xl flex items-center justify-center hover:bg-zinc-800 hover:border-green-600/50 transition-all active:scale-95"
+                title="Iniciar timer de descanso"
               >
-                <Timer className="w-6 h-6 text-green-500" />
+                <Timer className="w-6 h-6 md:w-8 md:h-8 text-green-500" />
               </button>
             )}
             
@@ -289,21 +329,19 @@ const WorkoutView: React.FC = () => {
                   setCurrentIndex(prev => prev + 1);
                   setIsTimerActive(false);
                 } else {
-                  // Finish workout
                   setIsFinished(true);
                 }
               }}
-              className="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-black rounded-2xl flex items-center justify-center gap-2 shadow-xl shadow-orange-600/30 transition-all uppercase tracking-widest text-sm"
+              className="flex-1 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white font-black rounded-3xl flex items-center justify-center gap-2 shadow-xl shadow-orange-600/50 transition-all active:scale-95 py-4 md:py-5"
             >
-              <CheckCircle2 className="w-5 h-5" />
-              {currentIndex === workout.exercises.length - 1 ? 'Finalizar' : 'Próximo'}
+              <CheckCircle2 className="w-6 h-6 md:w-7 md:h-7" />
+              <span className="text-sm md:text-base">{currentIndex === workout.exercises.length - 1 ? 'Finalizar Treino' : 'Próximo Exercício'}</span>
             </button>
           </div>
         </div>
       </div>
     );
   }
-
   // List Overview
   return (
     <div className="space-y-6 pb-32">
@@ -360,87 +398,156 @@ const WorkoutView: React.FC = () => {
         <span className="uppercase tracking-widest">Iniciar Treino Agora</span>
       </button>
 
-      {/* Exercises List */}
+      {/* Instructions & Overview */}
+      <div className="bg-gradient-to-r from-orange-600/10 via-orange-600/5 to-transparent border border-orange-600/20 rounded-3xl p-6 space-y-3">
+        <h3 className="text-sm font-black text-orange-300 uppercase tracking-widest flex items-center gap-2">
+          <Info className="w-4 h-4" /> Dicas Importantes
+        </h3>
+        <ul className="text-sm space-y-2 text-zinc-300">
+          <li className="flex gap-3">
+            <span className="text-orange-500 font-black text-lg">✓</span>
+            <span>Execute cada exercício com forma correta para melhores resultados</span>
+          </li>
+          <li className="flex gap-3">
+            <span className="text-orange-500 font-black text-lg">✓</span>
+            <span>Utilize o timer de descanso para manter a intensidade</span>
+          </li>
+          <li className="flex gap-3">
+            <span className="text-orange-500 font-black text-lg">✓</span>
+            <span>Beba água regularmente entre os exercícios</span>
+          </li>
+        </ul>
+      </div>
+
+      {/* Exercises List - Modern Cards */}
       <div className="space-y-4">
-        <h2 className="text-sm font-black text-zinc-500 uppercase tracking-[0.2em] px-2">Lista de Exercícios</h2>
+        <h2 className="text-sm font-black text-zinc-500 uppercase tracking-[0.2em] px-2 flex items-center gap-2">
+          <Dumbbell className="w-4 h-4" />
+          {workout.exercises.length} Exercícios neste Treino
+        </h2>
         {workout.exercises.map((ex, index) => (
           <div 
             key={ex.exerciseId + index}
             className={cn(
-              "bg-zinc-900 border rounded-3xl overflow-hidden transition-all duration-300",
-              completedExercises.includes(ex.exerciseId) ? "border-green-600/30 bg-green-600/5 opacity-60" : "border-zinc-800"
+              "bg-zinc-900 border rounded-3xl overflow-hidden transition-all duration-300 cursor-pointer group",
+              completedExercises.includes(ex.exerciseId) 
+                ? "border-green-600/40 bg-gradient-to-r from-green-600/10 to-transparent opacity-60" 
+                : "border-zinc-800 hover:border-orange-600/30 hover:shadow-lg hover:shadow-orange-600/10"
             )}
           >
-            <div className="p-5 flex items-center gap-4">
+            <div className="p-5 md:p-6 flex items-start gap-4">
+              {/* Checkbox */}
               <button 
                 onClick={(e) => {
                   e.stopPropagation();
                   toggleComplete(ex.exerciseId);
                 }}
                 className={cn(
-                  "w-10 h-10 rounded-xl flex items-center justify-center transition-all",
+                  "w-12 h-12 rounded-2xl flex items-center justify-center transition-all shrink-0 mt-1",
                   completedExercises.includes(ex.exerciseId) 
-                    ? "bg-green-600 text-white" 
-                    : "bg-zinc-950 border border-zinc-800 text-zinc-700 hover:border-zinc-600"
+                    ? "bg-green-600 text-white shadow-lg shadow-green-600/30" 
+                    : "bg-zinc-950 border border-zinc-800 text-zinc-700 hover:border-orange-600/50 hover:bg-orange-600/5"
                 )}
               >
                 <CheckCircle2 className="w-6 h-6" />
               </button>
               
-              <div className="flex-1 cursor-pointer" onClick={() => toggleExercise(ex.exerciseId)}>
-                <h3 className={cn(
-                  "font-bold text-lg transition-all",
-                  completedExercises.includes(ex.exerciseId) ? "text-zinc-500 line-through" : "text-white"
-                )}>
-                  {ex.name}
-                </h3>
-                <div className="flex items-center gap-4 mt-1">
-                  <span className="text-[10px] font-black text-orange-500 uppercase flex items-center gap-1">
-                    <Repeat className="w-3 h-3" /> {ex.sets}x{ex.reps}
+              {/* Exercise Info */}
+              <div className="flex-1 min-w-0 cursor-pointer" onClick={() => toggleExercise(ex.exerciseId)}>
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <h3 className={cn(
+                    "font-black text-lg transition-all",
+                    completedExercises.includes(ex.exerciseId) ? "text-zinc-500 line-through" : "text-white group-hover:text-orange-400"
+                  )}>
+                    {ex.name}
+                  </h3>
+                  <span className="text-[10px] font-black text-zinc-600 bg-zinc-950 px-2.5 py-1 rounded-lg whitespace-nowrap">
+                    #{index + 1}
                   </span>
+                </div>
+                
+                <div className="flex flex-wrap items-center gap-2 mb-3">
+                  <span className="bg-orange-600/20 border border-orange-600/40 px-3 py-1 rounded-lg text-[11px] font-black text-orange-400 uppercase tracking-wider">
+                    {ex.muscleGroup}
+                  </span>
+                </div>
+
+                {/* Stats Row */}
+                <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
+                  <div className="bg-zinc-950/50 border border-zinc-800 p-2 rounded-xl text-center">
+                    <p className="text-[8px] text-zinc-600 uppercase font-black tracking-tighter">Séries</p>
+                    <p className="text-sm font-bold text-white mt-0.5">{ex.sets}</p>
+                  </div>
+                  <div className="bg-zinc-950/50 border border-zinc-800 p-2 rounded-xl text-center">
+                    <p className="text-[8px] text-zinc-600 uppercase font-black tracking-tighter">Reps</p>
+                    <p className="text-sm font-bold text-white mt-0.5">{ex.reps}</p>
+                  </div>
                   {ex.load && (
-                    <span className="text-[10px] font-black text-blue-500 uppercase flex items-center gap-1">
-                      <Weight className="w-3 h-3" /> {ex.load}
-                    </span>
+                    <div className="bg-zinc-950/50 border border-zinc-800 p-2 rounded-xl text-center">
+                      <p className="text-[8px] text-zinc-600 uppercase font-black tracking-tighter">Carga</p>
+                      <p className="text-sm font-bold text-white mt-0.5">{ex.load}</p>
+                    </div>
                   )}
+                  <div className="bg-zinc-950/50 border border-zinc-800 p-2 rounded-xl text-center">
+                    <p className="text-[8px] text-zinc-600 uppercase font-black tracking-tighter">Descanso</p>
+                    <p className="text-sm font-bold text-white mt-0.5">{ex.rest}</p>
+                  </div>
                 </div>
               </div>
 
+              {/* Expand Button */}
               <button 
                 onClick={() => toggleExercise(ex.exerciseId)}
-                className="p-2 text-zinc-500 hover:text-white transition-colors"
+                className="p-2 text-zinc-500 hover:text-orange-500 hover:bg-zinc-950 rounded-xl transition-all shrink-0"
               >
-                {expandedExercise === ex.exerciseId ? <ChevronUp /> : <ChevronDown />}
+                {expandedExercise === ex.exerciseId ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
               </button>
             </div>
 
+            {/* Expanded Details */}
             {expandedExercise === ex.exerciseId && (
-              <div className="px-5 pb-5 pt-2 border-t border-zinc-800/50 space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
-                <div className="aspect-video bg-zinc-950 rounded-2xl border border-zinc-800 overflow-hidden relative">
+              <div className="px-5 md:px-6 pb-5 pt-3 border-t border-zinc-800/50 space-y-5 bg-zinc-950/30 animate-in fade-in slide-in-from-top-2 duration-200">
+                {/* Exercise Demo Video/Image */}
+                <div className="aspect-video bg-gradient-to-br from-zinc-900 to-zinc-950 rounded-3xl border border-zinc-800 overflow-hidden relative group/demo">
                   {ex.gifUrl ? (
-                    <img src={ex.gifUrl} alt={ex.name} className="w-full h-full object-cover" />
+                    <img src={ex.gifUrl} alt={ex.name} className="w-full h-full object-cover group-hover/demo:scale-105 transition-transform duration-300" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-zinc-800">
-                      <Play className="w-12 h-12" />
+                      <Dumbbell className="w-16 h-16 opacity-20" />
                     </div>
                   )}
                 </div>
-                
+
+                {/* Instructions */}
                 {ex.notes && (
-                  <div className="bg-zinc-950 p-4 rounded-2xl border border-zinc-800 flex gap-3">
-                    <Info className="w-5 h-5 text-blue-500 shrink-0" />
-                    <p className="text-sm text-zinc-400 italic">{ex.notes}</p>
+                  <div className="bg-blue-600/10 border border-blue-600/30 p-5 rounded-3xl space-y-2">
+                    <h4 className="text-sm font-black text-blue-400 uppercase tracking-widest flex items-center gap-2">
+                      <Info className="w-4 h-4" /> Instruções
+                    </h4>
+                    <p className="text-sm text-blue-100 leading-relaxed">{ex.notes}</p>
                   </div>
                 )}
+
+                {/* Pro Tip */}
+                <div className="bg-emerald-600/10 border border-emerald-600/30 p-5 rounded-3xl space-y-2">
+                  <h4 className="text-sm font-black text-emerald-400 uppercase tracking-widest flex items-center gap-2">
+                    <Sparkles className="w-4 h-4" /> Dica do Trainer
+                  </h4>
+                  <p className="text-sm text-emerald-100 leading-relaxed">
+                    Foque em manter a forma perfeita durante todo o exercício. Qualidade é sempre melhor que quantidade!
+                  </p>
+                </div>
                 
+                {/* Action Button */}
                 <button 
                   onClick={() => {
                     setIsTracking(true);
                     setCurrentIndex(index);
                   }}
-                  className="w-full py-3 bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-black uppercase tracking-widest rounded-xl transition-colors"
+                  className="w-full py-4 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white text-sm font-black uppercase tracking-widest rounded-2xl transition-all shadow-lg shadow-orange-600/20 active:scale-95 flex items-center justify-center gap-2"
                 >
-                  Focar neste exercício
+                  <Play className="w-5 h-5 fill-white" />
+                  Executar Agora
                 </button>
               </div>
             )}
